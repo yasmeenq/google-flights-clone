@@ -1,35 +1,37 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import { flightService } from '../src/Services/FlightService';
+import { Flight, Airport, SearchParams } from './Models/types';
+import SearchForm from './Components/SearchForm/SearchForm';
+import FlightList from './Components/FlightList/FlightList';
+import { Toaster } from 'react-hot-toast';
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [flights, setFlights] = useState<Flight[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const handleSearch = async (params: SearchParams) => {
+    try {
+      setLoading(true);
+      const results = await flightService.searchFlights({
+        originSkyId: params.origin!.skyId,
+        destinationSkyId: params.destination!.skyId,
+        date: params.date.toISOString().split('T')[0],
+        adults: params.adults,
+      });
+      setFlights(results);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="container mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-8">Flight Search</h1>
+      {/* <SearchForm onSubmit={handleSearch} loading={loading} /> */}
+      <FlightList flights={flights} loading={loading} />
+      <Toaster position="bottom-right" />
+    </div>
+  );
 }
-
-export default App
