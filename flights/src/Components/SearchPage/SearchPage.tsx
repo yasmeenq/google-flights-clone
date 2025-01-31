@@ -2,7 +2,7 @@ import css from "./SearchPage.module.css";
 import { useState } from "react";
 
 
-export function SearchPage(): JSX.Element {
+export function SearchPage({ onSearch, loading }): JSX.Element {
 
     // const [origin, setOrigin] = useState('');
     // const [destination, setDestination] = useState('');

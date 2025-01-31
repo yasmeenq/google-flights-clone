@@ -11,7 +11,7 @@ interface Airport {
     country: string;
 }
 
-export function Testing(): JSX.Element {
+export function AirportTest(): JSX.Element {
     const [airports, setAirports] = useState<Airport[]>([]);
 
     useEffect(() => {
