@@ -1,27 +1,35 @@
 import axios from "axios";
 import { appConfig } from "../Utils/AppConfig";
 import toast from "react-hot-toast";
-import { Airport } from "../Models/types";
+import { Airport } from "../interfaces/FlightData";
 
-const handleError = (error: unknown) => {
-    const message = error instanceof Error ? error.message : "API request failed";
-    toast.error(message);
-    throw new Error(message);
-};
 
-export const airportService = {
-    async searchAirports(query: string): Promise<Airport[]> {
+class AirportService {
+
+    public async getAllAirports(): Promise<Airport[]> {
         try {
-            const { data } = await axios.get<{ data: Airport[] }>(
-                appConfig.endpoints.searchAirport,
-                {
-                    params: { query },
-                    headers: appConfig.headers
-                }
-            );
-            return data.data;
-        } catch (error) {
-            return handleError(error);
+            const response = await axios.get(appConfig.endpoints.searchAirport, { headers: appConfig.headers });
+            console.log("API Response:", response.data);
+
+            if (response.data.status === true && Array.isArray(response.data.data)) {
+                const airportsData = response.data.data; 
+                console.log("Airports Data:", airportsData);
+
+                // Directly return the airports data, assuming it matches the Airport interface
+                return airportsData;
+            } else {
+                toast.error('No airports found or invalid response');
+                console.error("Invalid response:", response.data);
+                return [];
+            }
+        } catch (err: any) {
+            toast.error(`Error fetching airports: ${err.message || "Unknown error"}`);
+            console.error(err);
+            return [];
         }
     }
-};
+}
+
+export default AirportService;
+
+

@@ -1,9 +1,20 @@
+import { AirportData } from "../AirportData/AirportData";
 import css from "./SearchPage.module.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { AirportModel } from "../../Models/AirportModel";
+import { airportService } from "../../Services/AirportService";
 
 export function SearchPage(): JSX.Element {
-  const [tripType, setTripType] = useState<"round" | "oneWay">("round");
-  const [returnDate, setReturnDate] = useState("");
+    const [tripType, setTripType] = useState<"round" | "oneWay">("round");
+    const [returnDate, setReturnDate] = useState("");
+
+
+    const [airports, setAirports] = useState<AirportModel[]>([]);
+    // Fetch airports on component mount
+    useEffect(() => {
+      airportService.getAllAirports().then(setAirports);
+    }, []);
+  
 
   return (
     <div className={css.SearchPage}>
@@ -41,16 +52,30 @@ export function SearchPage(): JSX.Element {
               <div className={css.inputGroup}>
                 <span className="material-icons">flight_takeoff</span>
                 <input
-                  type="text"
-                  placeholder="From where?"
-                  className={css.locationInput}
+                    type="text"
+                    list="airports-list"
+                    name="origin"
+                    placeholder="From where?"
+                    className={css.locationInput}
+                    autoComplete="off"
                 />
+                <datalist id="airports-list">
+                    {airports.map((airport) => (
+                    <option
+                        key={airport.entityId}
+                        value={`${airport.presentation.suggestionTitle}`}
+                    >
+                        {airport.presentation.suggestionTitle}
+                    </option>
+                    ))}
+              </datalist>
               </div>
 
               <div className={css.inputGroup}>
                 <span className="material-icons">flight_land</span>
                 <input
                   type="text"
+                  name="destination"
                   placeholder="Where to?"
                   className={css.locationInput}
                 />
@@ -79,6 +104,7 @@ export function SearchPage(): JSX.Element {
             Search Flights
         </button>
       </div>
+      <AirportData />
     </div>
   );
 }

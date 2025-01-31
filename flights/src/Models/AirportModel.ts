@@ -1,74 +1,51 @@
 
 
 export class AirportModel {
-  status: boolean;
-  timestamp: number;
-  data: {
-    current: {
-      skyId: string;
-      entityId: string;
-      presentation: {
+    status: boolean = false;
+    timestamp: number = 0;
+    skyId: string = '';
+    entityId: string = '';
+    presentation: {
         title: string;
         suggestionTitle: string;
         subtitle: string;
-      };
-      navigation: {
+    } = {
+        title: '',
+        suggestionTitle: '',
+        subtitle: '',
+    };
+    navigation?: {
         entityId: string;
         entityType: string;
         localizedName: string;
-        relevantFlightParams: {
-          skyId: string;
-          entityId: string;
-          flightPlaceType: string;
-          localizedName: string;
-        };
-        relevantHotelParams: {
-          entityId: string;
-          entityType: string;
-          localizedName: string;
-        };
-      };
-    };
-    nearby: any[]; 
-    recent: any[];  
-  };
-
-  constructor(
-    status: boolean,
-    timestamp: number,
-    data: {
-      current: {
-        skyId: string;
-        entityId: string;
-        presentation: {
-          title: string;
-          suggestionTitle: string;
-          subtitle: string;
-        };
-        navigation: {
-          entityId: string;
-          entityType: string;
-          localizedName: string;
-          relevantFlightParams: {
+        relevantFlightParams?: {
             skyId: string;
             entityId: string;
             flightPlaceType: string;
             localizedName: string;
-          };
-          relevantHotelParams: {
+        };
+        relevantHotelParams?: {
             entityId: string;
             entityType: string;
             localizedName: string;
-          };
         };
-      };
-      nearby: any[];
-      recent: any[];
-    }
-  ) {
-    this.status = status;
-    this.timestamp = timestamp;
-    this.data = data;
-  }
-}
+    };
 
+    constructor(data?: Partial<AirportModel>) {
+        if (data) {
+            Object.assign(this, data);
+            // Handle nested objects properly
+            this.presentation = data.presentation ? { 
+                ...this.presentation, 
+                ...data.presentation 
+            } : this.presentation;
+            
+            if (data.navigation) {
+                this.navigation = { 
+                    ...(this.navigation || {}), 
+                    ...data.navigation 
+                };
+            }
+        }
+    }
+}
