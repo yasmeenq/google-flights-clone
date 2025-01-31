@@ -1,5 +1,5 @@
 
-# I used this to extract the structure of the JSON code.
+# I used this to destruct the structure of the JSON code just to understand it better.
 
 import json
 
@@ -38,15 +38,8 @@ for key, value in structure.items():
     print(f"Key: {key}, Type: {value}")
 
 
-# -status
-# -message
-# -data =>
-#         -itineraries =>-legs
-#         -filterStats =>-airports
-#                        -duration
 
-
-
+#output: 
 # Key: status, Type: bool
 # Key: message, Type: str
 # Key: data, Type: nested
