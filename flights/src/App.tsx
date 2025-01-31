@@ -1,14 +1,13 @@
 import './App.css'
-import { Header } from './Components/Header/Header';
 import { SearchPage } from './Components/SearchPage/SearchPage';
-
+import { Testing } from './Components/testing/testing';
 
 export default function App() {
 
-  return (
+    return (
     <div className="App">
-        <Header />
         <SearchPage />
+        <Testing />
     </div>
   );
 }

@@ -1,35 +1,36 @@
-import axios from "axios";
-import { appConfig } from "../Utils/AppConfig";
-import toast from "react-hot-toast";
-import { Airport } from "../interfaces/FlightData";
+import { apiClient } from "../Utils/AppConfig";
 
 
-class AirportService {
-
-    public async getAllAirports(): Promise<Airport[]> {
+class SearchAirportsService {
+    public async searchAirports(query: string) {
         try {
-            const response = await axios.get(appConfig.endpoints.searchAirport, { headers: appConfig.headers });
-            console.log("API Response:", response.data);
+            const response = await apiClient.get('/searchAirport', {
+                params: { query },
+            });
 
-            if (response.data.status === true && Array.isArray(response.data.data)) {
-                const airportsData = response.data.data; 
-                console.log("Airports Data:", airportsData);
+            const airportData = response.data.data;
+            console.log("Raw API Response:", airportData);
 
-                // Directly return the airports data, assuming it matches the Airport interface
-                return airportsData;
-            } else {
-                toast.error('No airports found or invalid response');
-                console.error("Invalid response:", response.data);
-                return [];
-            }
-        } catch (err: any) {
-            toast.error(`Error fetching airports: ${err.message || "Unknown error"}`);
-            console.error(err);
-            return [];
+            // Transform API response to match expected structure
+            const formattedData = airportData.map((item: any) => ({
+                entityId: item.entityId,
+                skyId: item.skyId,
+                airportName: item.presentation?.suggestionTitle || "Unknown",
+                city: item.navigation?.relevantHotelParams?.localizedName || "Unknown City",
+                country: item.presentation?.subtitle || "Unknown Country",
+            }));
+
+            console.log("Formatted Data:", formattedData);
+            return formattedData;
+            
+        } catch (error) {
+            console.error(
+                'Error fetching airport data:',
+                error instanceof Error ? error.message : 'Unknown error'
+            );
+            throw new Error('Unable to fetch airport data. Please try again later.');
         }
     }
 }
 
-export default AirportService;
-
-
+export const airportService = new SearchAirportsService()

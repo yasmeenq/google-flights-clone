@@ -1,18 +1,14 @@
+import axios from 'axios';
 
-class AppConfig {
-    public readonly baseUrl = "https://sky-scrapper.p.rapidapi.com/api/v1/flights";
+const API_KEY = import.meta.env.VITE_API_KEY;
+const API_HOST = import.meta.env.VITE_API_HOST;
+const BASE_URL = `https://${API_HOST}/api/v1/flights`;
 
-    public get headers() {
-        return {
-            "X-RapidAPI-Host": "sky-scrapper.p.rapidapi.com",
-            "X-RapidAPI-Key": "1659869c39mshd44370f0eaeb7c5p18aa62jsn03583201451d" // Use environment variables
-        };
-    }
+export const apiClient = axios.create({
+    baseURL: BASE_URL,
+    headers: {
+        'X-RapidAPI-Key': API_KEY,
+        'X-RapidAPI-Host': API_HOST,
+    },
+});
 
-    public endpoints = {
-        searchAirport: `${this.baseUrl}/searchAirport?query=new&locale=en-US`,
-        searchFlightsComplete: (params: string) => `${this.baseUrl}/searchFlightsComplete?originSkyId=LOND&destinationSkyId=NYCA&originEntityId=27544008&destinationEntityId=27537542${params}&cabinClass=economy&adults=1&sortBy=best&currency=USD&market=en-US&countryCode=US`
-    };
-}
-
-export const appConfig = new AppConfig();

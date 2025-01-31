@@ -38,6 +38,15 @@ for key, value in structure.items():
     print(f"Key: {key}, Type: {value}")
 
 
+# -status
+# -message
+# -data =>
+#         -itineraries =>-legs
+#         -filterStats =>-airports
+#                        -duration
+
+
+
 # Key: status, Type: bool
 # Key: message, Type: str
 # Key: data, Type: nested
