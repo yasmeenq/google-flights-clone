@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { flightService } from "../../Services/FlightService";
+import { flightService } from "../Services/FlightService";
 import toast from "react-hot-toast";
 
 export function FlightTest(): JSX.Element {

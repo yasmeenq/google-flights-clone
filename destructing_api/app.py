@@ -1,4 +1,5 @@
 
+
 # I used this to destruct the structure of the JSON code just to understand it better.
 
 import json

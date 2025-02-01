@@ -1,5 +1,5 @@
 import { apiClient } from "../Utils/AppConfig";
-
+import { Airport } from "../interface/airportInterface";
 
 class SearchAirportsService {
     public async searchAirports(query: string) {
@@ -11,8 +11,7 @@ class SearchAirportsService {
             const airportData = response.data.data;
             console.log("Raw API Response:", airportData);
 
-            // Transform API response to match expected structure
-            const formattedData = airportData.map((item: any) => ({
+            const formattedData = airportData.map((item: Airport) => ({
                 entityId: item.entityId,
                 skyId: item.skyId,
                 airportName: item.presentation?.suggestionTitle || "Unknown",

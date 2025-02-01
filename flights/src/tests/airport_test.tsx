@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./testing.css";
 import toast from "react-hot-toast";
-import { airportService } from "../../Services/AirportService";
+import { airportService } from "../Services/AirportService";
 
 interface Airport {
     entityId: string;
