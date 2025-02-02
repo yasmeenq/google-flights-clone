@@ -1,21 +1,50 @@
-import './App.css'
-import FlightResults from './Components/FlightResults/FlightResults';
+import { useState } from 'react';
+import './App.css';
 import { SearchPage } from './Components/SearchPage/SearchPage';
-import { AirportTest } from './tests/airport_test';
-import { FlightTest } from './tests/flights_test';
-import { ResultsTest } from './tests/resultsCSS_test';
-import { SearchP } from './tests/searchCSS_test';
+import { Box, CircularProgress } from '@mui/material';
+import FlightResults from './Components/FlightResults/FlightResults';
+import { Flight } from './interface/flightInterface';
+import { flightService } from './Services/FlightService';
+import { Airport } from './interface/airportInterface';
 
 export default function App() {
-    // const [flights, setFlights] = useState({});
-    // const [loading, setLoading] = useState(false);
+    const [flights, setFlights] = useState<Flight[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
 
-    // const handleSearch = null
+    const handleSearch = async (origin: Airport, destination: Airport, date: string) => {
+        setLoading(true);
+        try {
+            const flightData = await flightService.searchFlights(
+                origin.entityId,
+                origin.skyId, 
+                destination.entityId,
+                destination.skyId,
+                date
+            );
+    
+            const flights: Flight[] = flightData; 
+    
+            setFlights(flights);
+            console.log('here' + flights);
+    
+        } catch (error: any) {
+            console.error('Error during flight search:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
-    <div className="App">
-        {/* <SearchPage onSearch={handleSearch} loading={loading} /> */}
-        <SearchPage />
-    </div>
-  );
+        <div className="App">
+            <SearchPage onSearch={handleSearch} loading={loading} />
+
+            {/* {loading ? (
+                <Box display="flex" justifyContent="center" alignItems="center" style={{ height: '100px' }}>
+                    <CircularProgress />
+                </Box>
+            ) : (
+                // <FlightResults flights={flights} />
+            )} */}
+        </div>
+    );
 }

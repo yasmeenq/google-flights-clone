@@ -1,3 +1,4 @@
+import { Flight } from "../interface/flightInterface";
 import { apiClient } from "../Utils/AppConfig";
 
 
@@ -34,7 +35,7 @@ class searchFlightService {
           return `${hours.toString().padStart(2, '0')}h:${remainingMinutes.toString().padStart(2, '0')}min`;
         }
   
-        const formattedData = flightData.map((item: any) => {
+        const formattedData = flightData.map((item: Flight) => {
           const leg = item.legs[0]; // Access the first leg
           const marketingCarrier = leg?.carriers.marketing[0]; // Access the first marketing carrier
   
@@ -54,6 +55,7 @@ class searchFlightService {
         });
   
         return formattedData;
+        
       } catch (error) {
         console.error(
           "Error fetching airport data:",

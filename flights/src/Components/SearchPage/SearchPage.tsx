@@ -79,7 +79,7 @@ export function SearchPage({ onSearch, loading }): JSX.Element {
     //handle submit button
     const handleSubmit = () => {
         if (origin && destination && date) {
-            onSearch(origin.value, destination.value, date);
+            onSearch(origin, destination, date);
         }
     };
 
