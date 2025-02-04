@@ -9,15 +9,18 @@ import { FlightResults } from './Components/FlightResults/FlightResults';
 export default function App() {
     const [flights, setFlights] = useState<Flight[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+    const [searched, setSearched] = useState<boolean>(false); // Track if search was made
 
     const handleSearch = async (origin: any, destination: any, date: string) => {
         setLoading(true);
+        setSearched(true); // Mark that a search has been performed
+
         const originSkyId: string = origin.value.skyId;
         const destinationSkyId: string = destination.value.skyId;
         const originEntityId: string = origin.value.entityId;
         const destinationEntityId: string = destination.value.entityId;
 
-        console.log('passed: ' , originSkyId, destinationSkyId, originEntityId, destinationEntityId)
+        console.log('Passed:', originSkyId, destinationSkyId, originEntityId, destinationEntityId);
 
         try {
             const flightData: Flight[] = await flightService.searchFlights(
@@ -47,16 +50,8 @@ export default function App() {
                     <CircularProgress />
                 </Box>
             ) : (
-                <FlightResults flights={flights} />
+                searched && flights.length > 0 && <FlightResults flights={flights} />
             )}
         </div>
     );
 }
-
-
-
-// https://sky-scrapper.p.rapidapi.com/api/v1/flights/searchFlightsComplete?originSkyId=JFK&destinationSkyId=LGW&originEntityId=95565058&destinationEntityId=95565051&date=2025-02-05
-
-// https://sky-scrapper.p.rapidapi.com/api/v2/flights/searchFlightsComplete?originSkyId=JFK&destinationSkyId=LGW&originEntityId=95565058&destinationEntityId=95565051&date=2025-02-10
-
-// https://sky-scrapper.p.rapidapi.com/api/v2/flights/searchFlightsComplete?originSkyId=JFK&destinationSkyId=LGW&originEntityId=95565058&destinationEntityId=95565051&date=2025-02-10&returnDate=2025-02-20&cabinClass=economy&adults=1&sortBy=best&currency=USD&market=en-US&countryCode=US

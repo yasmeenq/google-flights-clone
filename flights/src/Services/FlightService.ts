@@ -39,6 +39,7 @@ class searchFlightService {
 
       const formattedData: Flight[] = flightData.map((item) => ({
         id: item.id || "No flight Id",
+        price: item.price.formatted,
         legs: [
           {
             departure: item.legs[0]?.departure || "No departure",

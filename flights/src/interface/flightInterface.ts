@@ -24,7 +24,12 @@ interface Leg {
     };
 }
 
+interface Price{
+    formatted: string;
+}
+
 export interface Flight {
     id: string; 
+    price: Price;
     legs: Leg[];
 }

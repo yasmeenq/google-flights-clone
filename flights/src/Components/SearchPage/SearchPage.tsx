@@ -109,7 +109,7 @@ export function SearchPage({ onSearch, loading }): JSX.Element {
                     spacing={2}
                     alignItems="center"
                     justifyContent="center"
-                    style={{ marginBottom: '20px', padding: '20px' }}
+                    style={{ padding: '20px' }}
                 >
                     
                     {/* Origin Input */}
@@ -182,8 +182,8 @@ export function SearchPage({ onSearch, loading }): JSX.Element {
                         <Button
                             variant="contained"
                             color="primary"
-                        onClick={handleSubmit}
-                        disabled={!origin || !destination || !date || loading}
+                            onClick={handleSubmit}
+                            disabled={!origin || !destination || !date || loading}
                         >
                             {loading ? (
                         <CircularProgress size={24} color="inherit" />
