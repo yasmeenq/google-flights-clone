@@ -44,13 +44,13 @@ export function FlightResults({ flights }): JSX.Element {
         setSortKey(key);
         handleSortMenuClose();
     };
-
+    
     const sortedFlightData = flights?.slice().sort((a, b) => {
         if (!a.legs[0] || !b.legs[0]) return 0;
         const legA = a.legs[0];
         const legB = b.legs[0];
         let compareValue = 0;
-
+    
         switch (sortKey) {
             case 'departure':
                 compareValue = new Date(legA.departure).getTime() - new Date(legB.departure).getTime();
@@ -61,10 +61,13 @@ export function FlightResults({ flights }): JSX.Element {
             case 'duration':
                 compareValue = legA.durationInMinutes - legB.durationInMinutes;
                 break;
+            case 'price':
+                compareValue = parseFloat(a.price.replace(/[^\d.]/g, '')) - parseFloat(b.price.replace(/[^\d.]/g, ''));
+                break;
             default:
                 return 0;
         }
-
+    
         return compareValue;
     });
 
@@ -99,7 +102,7 @@ export function FlightResults({ flights }): JSX.Element {
             <List>
                 {currentFlightData?.map((itinerary) =>
                     itinerary.legs.map((leg) => (
-                        <React.Fragment key={leg.id}>
+                        <React.Fragment key={`${itinerary.id}-${leg.id}`}>
                             <ListItem
                                 sx={{
                                     display: 'flex',
@@ -214,6 +217,7 @@ export function FlightResults({ flights }): JSX.Element {
                 <MenuItem onClick={() => sortFlights('departure')}>Departure</MenuItem>
                 <MenuItem onClick={() => sortFlights('arrival')}>Arrival</MenuItem>
                 <MenuItem onClick={() => sortFlights('duration')}>Duration</MenuItem>
+                <MenuItem onClick={() => sortFlights('price')}>Price</MenuItem> {/* Added this */}
             </Menu>
         </Box>
     );
