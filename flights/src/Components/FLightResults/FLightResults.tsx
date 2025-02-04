@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import {
     List,
     ListItem,
@@ -15,13 +14,20 @@ import {
 } from '@mui/material';
 import SortIcon from '@mui/icons-material/Sort';
 import { useMediaQuery } from '@mui/material';
+import { Flight } from '../../interface/flightInterface';
 
 
+interface FlightResultsProps {
+    flights: Flight[];
+}
 
-export function FlightResults({ flights }): JSX.Element {
-    const [currentPage, setCurrentPage] = useState(0);
-    const [sortKey, setSortKey] = useState('');
+export function FlightResults({ flights }: FlightResultsProps): JSX.Element {
+
+    const [currentPage, setCurrentPage] = useState<number>(0);
+
+    const [sortKey, setSortKey] = useState<string>('');
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    
     const itemsPerPage = 5; 
 
     const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.down('sm'));
@@ -32,6 +38,7 @@ export function FlightResults({ flights }): JSX.Element {
         return `${hours}h ${minutes}min`;
     };
 
+    //sort handling
     const handleSortMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -45,7 +52,7 @@ export function FlightResults({ flights }): JSX.Element {
         handleSortMenuClose();
     };
     
-    const sortedFlightData = flights?.slice().sort((a, b) => {
+    const sortedFlightData = flights?.slice().sort((a: any, b: any) => {
         if (!a.legs[0] || !b.legs[0]) return 0;
         const legA = a.legs[0];
         const legB = b.legs[0];
@@ -62,7 +69,7 @@ export function FlightResults({ flights }): JSX.Element {
                 compareValue = legA.durationInMinutes - legB.durationInMinutes;
                 break;
             case 'price':
-                compareValue = parseFloat(a.price.replace(/[^\d.]/g, '')) - parseFloat(b.price.replace(/[^\d.]/g, ''));
+                compareValue = parseFloat(a.price) - parseFloat(b.price);
                 break;
             default:
                 return 0;
@@ -71,6 +78,7 @@ export function FlightResults({ flights }): JSX.Element {
         return compareValue;
     });
 
+    
     const currentFlightData =
         sortedFlightData?.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage) || [];
 
@@ -84,8 +92,11 @@ export function FlightResults({ flights }): JSX.Element {
 
     return (
         <Box sx={{ padding: 20, paddingTop: 5}}>
+
             <Grid container alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
+
                 <Typography variant="h4">Flight Itineraries</Typography>
+
                 <Typography variant="subtitle1">Total Flights: {flights?.length || 0}</Typography>
                 {!isSmallScreen && (
                     <Button
@@ -100,7 +111,7 @@ export function FlightResults({ flights }): JSX.Element {
             </Grid>
 
             <List>
-                {currentFlightData?.map((itinerary) =>
+                {currentFlightData?.map((itinerary: any) =>
                     itinerary.legs.map((leg) => (
                         <React.Fragment key={`${itinerary.id}-${leg.id}`}>
                             <ListItem
@@ -202,12 +213,15 @@ export function FlightResults({ flights }): JSX.Element {
 
 
             <Box display="flex" justifyContent="space-between" mt={2}>
+
                 <Button onClick={handlePreviousPage} disabled={currentPage === 0}>
                     Previous
                 </Button>
+
                 <Typography variant="body2">
                     Page {currentPage + 1} of {Math.ceil((flights?.length || 0) / itemsPerPage)}
                 </Typography>
+                
                 <Button onClick={handleNextPage} disabled={currentFlightData.length < itemsPerPage}>
                     Next
                 </Button>
@@ -217,12 +231,9 @@ export function FlightResults({ flights }): JSX.Element {
                 <MenuItem onClick={() => sortFlights('departure')}>Departure</MenuItem>
                 <MenuItem onClick={() => sortFlights('arrival')}>Arrival</MenuItem>
                 <MenuItem onClick={() => sortFlights('duration')}>Duration</MenuItem>
-                <MenuItem onClick={() => sortFlights('price')}>Price</MenuItem> {/* Added this */}
+                <MenuItem onClick={() => sortFlights('price')}>Price</MenuItem> 
             </Menu>
         </Box>
     );
 }
 
-FlightResults.propTypes = {
-    flights: PropTypes.array.isRequired,
-};

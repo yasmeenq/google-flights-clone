@@ -9,11 +9,11 @@ import { FlightResults } from './Components/FlightResults/FlightResults';
 export default function App() {
     const [flights, setFlights] = useState<Flight[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
-    const [searched, setSearched] = useState<boolean>(false); // Track if search was made
+    const [searched, setSearched] = useState<boolean>(false);
 
     const handleSearch = async (origin: any, destination: any, date: string) => {
         setLoading(true);
-        setSearched(true); // Mark that a search has been performed
+        setSearched(true); 
 
         const originSkyId: string = origin.value.skyId;
         const destinationSkyId: string = destination.value.skyId;
