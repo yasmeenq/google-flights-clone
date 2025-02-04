@@ -1,15 +1,15 @@
-import { apiClient } from "../Utils/AppConfig";
+import { apiAirportClient } from "../Utils/AppConfig";
 import { Airport } from "../interface/airportInterface";
 
 class SearchAirportsService {
     public async searchAirports(query: string) {
         try {
-            const response = await apiClient.get('/searchAirport', {
+            const response = await apiAirportClient.get('/searchAirport', {
                 params: { query },
             });
 
             const airportData = response.data.data;
-            console.log("Raw API Response:", airportData);
+            // console.log("Full Airports Response:", airportData);
 
             const formattedData = airportData.map((item: Airport) => ({
                 entityId: item.entityId,
@@ -19,7 +19,7 @@ class SearchAirportsService {
                 country: item.presentation?.subtitle || "Unknown Country",
             }));
 
-            console.log("Formatted Data:", formattedData);
+            console.log("Formatted Airport Data:", formattedData);
             return formattedData;
             
         } catch (error) {

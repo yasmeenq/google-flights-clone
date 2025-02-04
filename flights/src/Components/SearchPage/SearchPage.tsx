@@ -11,11 +11,11 @@ export function SearchPage({ onSearch, loading }): JSX.Element {
     const [load, setLoad] = useState(false);  
 
     // Origin State
-    const [origin, setOrigin] = useState<Airport | null>(null);
+    const [origin, setOrigin] = useState<Airport>();
     const [originOptions, setOriginOptions] = useState<Airport[]>([]); 
 
     // Destination State
-    const [destination, setDestination] = useState<Airport | null>(null);
+    const [destination, setDestination] = useState<Airport>();
     const [destinationOptions, setDestinationOptions] = useState<Airport[]>([]);
 
     // Date State
@@ -30,6 +30,7 @@ export function SearchPage({ onSearch, loading }): JSX.Element {
                 const formattedAirports = airports.map((airport: any) => ({
                     label: airport.airportName || `Airport Not Found (${airport.entityId})`, 
                     key: airport.entityId,
+                    value: airport
                 }));
                 setAllAirports(formattedAirports);
             } catch (error) {
@@ -52,6 +53,7 @@ export function SearchPage({ onSearch, loading }): JSX.Element {
             setOriginOptions(airports.map((airport: any) => ({
                 label: airport.airportName || `Airport Not Found (${airport.entityId})`, 
                 key: airport.entityId,
+                value: airport
             })));
         } else {
             setOriginOptions(allAirports);
@@ -69,6 +71,7 @@ export function SearchPage({ onSearch, loading }): JSX.Element {
             setDestinationOptions(airports.map((airport: any) => ({
                 label: airport.airportName || `Airport Not Found (${airport.entityId})`, 
                 key: airport.entityId,
+                value: airport
             })));
         } else {
             setDestinationOptions(allAirports);
@@ -79,10 +82,11 @@ export function SearchPage({ onSearch, loading }): JSX.Element {
     //handle submit button
     const handleSubmit = () => {
         if (origin && destination && date) {
-            onSearch(origin, destination, date);
+            onSearch(origin, destination, date);  //this returns two objects and string
+            console.log('origin object', origin);
+            console.log('destination object', destination);
         }
     };
-
 
     return (
         <div className={css.SearchPage}>
@@ -113,14 +117,9 @@ export function SearchPage({ onSearch, loading }): JSX.Element {
                         <Autocomplete
                             options={originOptions}
                             onInputChange={handleOriginInputChange}
-                            onChange={(event, value) => setOrigin(value as Airport | null)}
+                            onChange={(event, value) => setOrigin(value)}
                             onOpen={handleOriginFocus}
                             loading={load}
-                            renderOption={(props, option) => (
-                                <li {...props} key={option.entityId}> {/* Use entityId as the key */}
-                                    {option.label}
-                                </li>
-                            )}
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
@@ -145,7 +144,7 @@ export function SearchPage({ onSearch, loading }): JSX.Element {
                         <Autocomplete
                             options={destinationOptions}
                             onInputChange={handleDestinationInputChange}
-                            onChange={(event, value) => setDestination(value as Airport | null)}
+                            onChange={(event, value) => setDestination(value)}
                             onOpen={handleDestinationFocus}
                             loading={load}
                             renderInput={(params) => (

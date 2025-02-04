@@ -1,69 +1,84 @@
 import { Flight } from "../interface/flightInterface";
-import { apiClient } from "../Utils/AppConfig";
-
-
+import { apiFlightClient } from "../Utils/AppConfig";
 
 class searchFlightService {
-    public async searchFlights(
-      originSkyId: string,
-      destinationSkyId: string,
-      originEntityId: string,
-      destinationEntityId: string,
-      date: string
-    ) {
-      try {
-        const response = await apiClient.get("/searchFlights", {
-          params: {
+  public async searchFlights(
+    originSkyId: string,
+    destinationSkyId: string,
+    originEntityId: string,
+    destinationEntityId: string,
+    date: string
+  ): Promise<Flight[]> {
+    try {
+      const response = await apiFlightClient.get("/searchFlightsComplete", {
+        params: {
             originSkyId,
             destinationSkyId,
             originEntityId,
             destinationEntityId,
             date,
-          },
-        });
-  
-        const flightData = response.data.data.itineraries;
-  
-        if (!Array.isArray(flightData)) {
-          throw new Error("Flight data is not an array");
-        }
-  
-        // Helper function to format duration
-        function formatDuration(minutes: number): string {
-          const hours = Math.floor(minutes / 60);
-          const remainingMinutes = minutes % 60;
-          return `${hours.toString().padStart(2, '0')}h:${remainingMinutes.toString().padStart(2, '0')}min`;
-        }
-  
-        const formattedData = flightData.map((item: Flight) => {
-          const leg = item.legs[0]; // Access the first leg
-          const marketingCarrier = leg?.carriers.marketing[0]; // Access the first marketing carrier
-  
-          return {
-            flightId: item.id || 'No flight Id',
-            carrierName: marketingCarrier?.name || 'No carrierName', // Access name from the first marketing carrier
-            carrierLogo: marketingCarrier?.logoUrl || 'No carrierLogo', // Access logoUrl from the first marketing carrier
-            departureTime: leg?.departure || 'No departureTime',
-            originAirportName: leg?.origin.name || 'No originAirportName',
-            originAirportCode: leg?.origin.displayCode || 'No originAirportCode',
-            arrivalTime: leg?.arrival || 'No arrivalTime',
-            arrivalAirportName: leg?.destination.name || 'No arrivalAirportName',
-            arrivalAirportCode: leg?.destination.displayCode || 'No arrivalAirportCode',
-            duration: formatDuration(leg?.durationInMinutes) || 'No duration',
-            stopCount: leg?.stopCount || 'No stops',
-          };
-        });
-  
-        return formattedData;
-        
-      } catch (error) {
-        console.error(
-          "Error fetching airport data:",
-          error instanceof Error ? error.message : "Unknown error"
-        );
-        throw new Error("Unable to fetch airport data. Please try again later.");
+        },
+      });
+
+      console.log("full flight response", response);
+
+      // Ensure the response has the correct structure
+      if (
+        !response.data ||
+        !response.data.data ||
+        !response.data.data.itineraries
+      ) {
+        throw new Error("Invalid API response: 'itineraries' not found");
       }
+
+      const flightData = response.data.data.itineraries;
+
+      if (!Array.isArray(flightData)) {
+        throw new Error("Flight data is not an array");
+      }
+
+      const formattedData: Flight[] = flightData.map((item) => ({
+        id: item.id || "No flight Id",
+        legs: [
+          {
+            departure: item.legs[0]?.departure || "No departure",
+            arrival: item.legs[0]?.arrival || "No arrival",
+            origin: {
+              name: item.legs[0]?.origin.name || "No origin name",
+              displayCode: item.legs[0]?.origin.displayCode || "No origin code",
+            },
+            destination: {
+              name: item.legs[0]?.destination.name || "No destination name",
+              displayCode:
+                item.legs[0]?.destination.displayCode || "No destination code",
+            },
+            durationInMinutes: item.legs[0]?.durationInMinutes || 0,
+            stopCount: item.legs[0]?.stopCount || 0,
+            carriers: {
+              marketing: [
+                {
+                  name:
+                    item.legs[0]?.carriers?.marketing?.[0]?.name ||
+                    "No carrier name",
+                  logoUrl:
+                    item.legs[0]?.carriers?.marketing?.[0]?.logoUrl ||
+                    "No logo",
+                },
+              ],
+            },
+          },
+        ],
+      }));
+
+      return formattedData;
+    } catch (error) {
+      console.error(
+        "Error fetching flight data:",
+        error instanceof Error ? error.message : "Unknown error"
+      );
+      throw new Error("Unable to fetch flights. Please try again later.");
     }
   }
-  
-  export const flightService = new searchFlightService();
+}
+
+export const flightService = new searchFlightService();

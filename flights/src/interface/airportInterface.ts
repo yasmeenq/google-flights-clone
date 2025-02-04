@@ -9,7 +9,7 @@ export interface Airport {
     };
     navigation: {
         relevantHotelParams: {
-            localizedName: string;
+            localizedName: string;  //city/ state name
         };
     };
 
